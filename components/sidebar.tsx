@@ -52,6 +52,7 @@ const musicMenu = [
 const playlists = new Array(30).fill(1).map((_, i) => `Playlist ${i + 1}`)
 
 const Sidebar = () => {
+  const playlist =
   return (
     <Box
       width="100%"
