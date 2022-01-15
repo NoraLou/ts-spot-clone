@@ -2,15 +2,18 @@ import GradientLayout from '../components/gradientLayout'
 import { Box, Text, Flex } from '@chakra-ui/layout'
 import { Image } from '@chakra-ui/react'
 import prisma from '../lib/prisma'
+import { useMe } from '../lib/hooks'
+
 
 const Home = ({ artists }) => {
+  const { user } = useMe()
   return (
     <GradientLayout
       roundImage
       color="gray"
       subtitle="profile"
-      title="Noura"
-      description="15 public playlists"
+      title={`${user?.firstName} ${user?.lastName}`}
+      description={`${user?.playListsCount} public playlists` }
       image="https://placekitten.com/200/300"
     >
       <Box color="white" paddingX="40px">
