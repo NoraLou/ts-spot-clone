@@ -18,12 +18,65 @@ import {
   MdOutlinePlayCircleFilled,
   MdOutlinePauseCircleFilled,
   MdOutlineRepeat,
+  MdPlayCircleFilled,
  } from 'react-icons/md'
 import { useStoreActions } from 'easy-peasy'
 
 const Player = () => {
   return (
-    <Box>hello from player</Box>
+    <Box>
+      <Box>
+        {/* <ReactHowler /> */}
+      </Box>
+      <Center >
+        <ButtonGroup>
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="shuffle"
+            fontSize="24px"
+            icon={ <MdShuffle />}
+          />
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="skip"
+            fontSize="24px"
+            icon={<MdSkipPrevious/> }
+          />
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="play"
+            fontSize="40px"
+            color="white"
+            icon={ <MdPlayCircleFilled />}
+          />
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="pause"
+            fontSize="40px"
+            color="white"
+            icon={ <MdOutlinePauseCircleFilled />}
+          />
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="next"
+            fontSize="24px"
+            icon={ <MdSkipNext />}
+          />
+          <IconButton
+            outline="none"
+            variant="link"
+            aria-label="repeat"
+            fontSize="24px"
+            icon={ <MdOutlineRepeat />}
+          />
+        </ButtonGroup>
+      </Center>
+    </Box>
   )
 }
 
