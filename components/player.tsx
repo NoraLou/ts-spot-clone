@@ -24,12 +24,51 @@ import {
 import { useStoreActions } from 'easy-peasy'
 
 const Player = ({songs, activeSong }) => {
-  const [playing, setPlaying] = useState(true)
+  const [playing, setPlaying] = useState(false)
   const [index, setIndex] = useState(0)
   const [seek, setSeek] = useState(0.0)
   const [repeat, setRepeat] = useState(false)
   const [shuffle, setShuffle] = useState(false)
   const [duration, setDuration] = useState(0.0)
+  const soundRef = useRef(null)
+
+  const prevSong = () => {
+    setIndex((state) => {
+      return state ? state - 1 : songs.length-1
+    })
+  }
+
+  const nextSong = () => {
+    setIndex((state) => {
+      if (shuffle) {
+        const next = Math.floor(Math.random() * songs.length)
+        if (next === state) {
+          return nextSong()
+        }
+        return next
+      }
+      return state === songs.length-1 ? 0 : state + 1
+    })
+  }
+
+  const onEnd = () => {
+    if (repeat) {
+      setSeek(0)
+      soundRef.current.seek(0)
+    } else {
+      nextSong()
+    }
+  }
+
+  const onLoad = () => {
+    const songDuration = soundRef.current.duration()
+    setDuration(songDuration)
+  }
+
+  const onSeek = (e) => {
+    setSeek(parseFLoat(e[0]))
+    soundRef.current.seek(e[0])
+  }
 
   const setPlayState = (value) => {
     setPlaying(value)
@@ -48,6 +87,9 @@ const Player = ({songs, activeSong }) => {
         <ReactHowler
           playing={playing}
           src={activeSong?.url}
+          ref={soundRef}
+          onLoad={onLoad}
+          onEnd={onEnd}
         />
       </Box>
       <Center >
@@ -66,7 +108,8 @@ const Player = ({songs, activeSong }) => {
             variant="link"
             aria-label="skip"
             fontSize="24px"
-            icon={<MdSkipPrevious/> }
+            icon={<MdSkipPrevious />}
+            onClick={ prevSong }
           />
           { playing ? (
             <IconButton
@@ -94,7 +137,8 @@ const Player = ({songs, activeSong }) => {
             variant="link"
             aria-label="next"
             fontSize="24px"
-            icon={ <MdSkipNext />}
+            icon={<MdSkipNext />}
+            onclick={ nextSong }
           />
           <IconButton
             outline="none"
@@ -117,7 +161,7 @@ const Player = ({songs, activeSong }) => {
               aria-label={['min', 'max']}
               step={0.1}
               min={0}
-              max={321}
+              max={duration ? duration.toFixed(2) : 0 }
               id="player-range"
             >
               <RangeSliderTrack bg="gray.800">
