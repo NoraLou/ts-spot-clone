@@ -22,6 +22,7 @@ import {
   MdPlayCircleFilled,
  } from 'react-icons/md'
 import { useStoreActions } from 'easy-peasy'
+import { formatTime } from '../lib/formatters'
 
 const Player = ({songs, activeSong }) => {
   const [playing, setPlaying] = useState(false)
@@ -31,6 +32,21 @@ const Player = ({songs, activeSong }) => {
   const [shuffle, setShuffle] = useState(false)
   const [duration, setDuration] = useState(0.0)
   const soundRef = useRef(null)
+  const [isSeeking, setIsSeeking] = useState(false)
+
+  useEffect(() => {
+    let timerId
+    if (playing && !isSeeking) {
+      const f = () => {
+        setSeek(soundRef.current.seek())
+        timerId = requestAnimationFrame(f)
+      }
+
+      timerId = requestAnimationFrame(f)
+      return () => cancelAnimationFrame(timerId)
+    }
+    cancelAnimationFrame(timerId)
+  }, [playing, isSeeking])
 
   const prevSong = () => {
     setIndex((state) => {
@@ -66,7 +82,7 @@ const Player = ({songs, activeSong }) => {
   }
 
   const onSeek = (e) => {
-    setSeek(parseFLoat(e[0]))
+    setSeek(parseFloat(e[0]))
     soundRef.current.seek(e[0])
   }
 
@@ -138,7 +154,7 @@ const Player = ({songs, activeSong }) => {
             aria-label="next"
             fontSize="24px"
             icon={<MdSkipNext />}
-            onclick={ nextSong }
+            onClick={ nextSong }
           />
           <IconButton
             outline="none"
@@ -154,15 +170,19 @@ const Player = ({songs, activeSong }) => {
       <Box color="gray.600">
         <Flex justify="center" align="center">
           <Box width="10%">
-            <Text fontSize="xs">1:21</Text>
+            <Text fontSize="xs">{formatTime(seek)}</Text>
           </Box>
           <Box width="80%">
             <RangeSlider
               aria-label={['min', 'max']}
               step={0.1}
               min={0}
-              max={duration ? duration.toFixed(2) : 0 }
+              max={duration ? duration.toFixed(2) : 0}
               id="player-range"
+              onChange={onSeek}
+              value={[seek]}
+              onChangeStart={()=> setIsSeeking(true)}
+              onChangeEnd={()=> setIsSeeking(false)}
             >
               <RangeSliderTrack bg="gray.800">
                 <RangeSliderFilledTrack bg="gray.600" />
@@ -171,7 +191,7 @@ const Player = ({songs, activeSong }) => {
             </RangeSlider>
           </Box>
           <Box width="10%" textAlign="right">
-            <Text font="xs">321</Text>
+            <Text font="xs">{formatTime(duration)}</Text>
           </Box>
         </Flex>
       </Box>
