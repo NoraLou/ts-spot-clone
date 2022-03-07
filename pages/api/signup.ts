@@ -14,10 +14,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     user = await prisma.user.create({
       data: {
         email,
-        password: bcrypt.hashSync(password, salt)
+        password: bcrypt.hashSync(password, salt),
+        firstName: 'Nora',
+        lastName: 'Humpage'
       }
     })
   } catch (e) {
+    console.log('error ', e)
     res.status(401)
     res.json({ error: 'User already exists' })
     return
